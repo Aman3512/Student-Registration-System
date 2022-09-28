@@ -1,0 +1,31 @@
+
+Student table =>
+
++----------+-------------+------+-----+---------+----------------+
+| Field    | Type        | Null | Key | Default | Extra          |
++----------+-------------+------+-----+---------+----------------+
+| roll     | int         | NO   | PRI | NULL    | auto_increment |
+| name     | varchar(12) | YES  |     | NULL    |                |
+| email    | varchar(15) | YES  |     | NULL    |                |
+| password | varchar(10) | YES  |     | NULL    |                |
++----------+-------------+------+-----+---------+----------------+
+
+Course table =>
+
++-------+-------------+------+-----+---------+----------------+
+| Field | Type        | Null | Key | Default | Extra          |
++-------+-------------+------+-----+---------+----------------+
+| cid   | int         | NO   | PRI | NULL    | auto_increment |
+| cname | varchar(12) | YES  |     | NULL    |                |
+| fee   | int         | YES  |     | NULL    |                |
+| seat  | int         | YES  |     | NULL    |                |
++-------+-------------+------+-----+---------+----------------+
+
+course_student table =>
+
++-------+------+------+-----+---------+-------+
+| Field | Type | Null | Key | Default | Extra |
++-------+------+------+-----+---------+-------+
+| cid   | int  | YES  | MUL | NULL    |       |
+| roll  | int  | YES  | MUL | NULL    |       |
++-------+------+------+-----+---------+-------+
