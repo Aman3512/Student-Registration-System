@@ -2,6 +2,7 @@ package com.masai.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -18,9 +19,34 @@ import com.masai.exceptions.StudentException;
 public class ServiceDaoImplementation implements ServiceDao{
 
 	@Override
-	public Admin loginAdmin(String name, String password)throws AdminException{
-		// TODO Auto-generated method stub
-		return null;
+	public Admin loginAdmin(String email, String password)throws AdminException{
+		 
+		Admin admin = null;
+		
+		try(Connection conn = DBConnection.ProvideConnection()) {
+			
+		  PreparedStatement ps	= conn.prepareStatement("select name from Admin where email = ? and password = ?");
+			
+		  ps.setString(1, email);
+		  ps.setString(2, password);
+		  
+		  ResultSet rs = ps.executeQuery();
+
+		  if(rs.next()) {
+			  String name = rs.getString("name");
+			   admin = new Admin();
+			  admin.setName(name);
+			 
+			  
+		  }else {
+			  throw new AdminException("Invalid Username or Password...");
+		  }
+		  
+		} catch (SQLException e) {
+			throw new AdminException(e.getMessage());
+		}
+		
+		return admin;
 	}
 
 	@Override
@@ -86,16 +112,64 @@ public class ServiceDaoImplementation implements ServiceDao{
 
 	@Override
 	public Student loginStudent(String email, String password) throws StudentException {
-		// TODO Auto-generated method stub
-		return null;
+
+        Student student = null;
+		
+		try(Connection conn = DBConnection.ProvideConnection()) {
+			
+		  PreparedStatement ps	= conn.prepareStatement("select roll ,name from Student where email = ? and password = ?");
+			
+		  ps.setString(1, email);
+		  ps.setString(2, password);
+		  
+		  ResultSet rs = ps.executeQuery();
+
+		  if(rs.next()) {
+			  int roll = rs.getInt("roll");
+			  String name = rs.getString("name");
+			  student = new Student();
+			  student.setRoll(roll);
+			  student.setName(name);
+			 
+			  
+		  }else {
+			  throw new StudentException("Invalid Username or Password...");
+		  }
+		  
+		} catch (SQLException e) {
+			throw new StudentException(e.getMessage());
+		}
+		
+		return student;
 	}
 
 	
 
 	@Override
-	public String updateProfile(int roll) throws StudentException {
-		// TODO Auto-generated method stub
-		return null;
+	public String updateProfile(Student student) throws StudentException {
+
+         String message = "not updated...";
+           
+         try(Connection conn = DBConnection.ProvideConnection()){
+			
+        	PreparedStatement  ps = conn.prepareStatement("update student set name = ? , email = ? , password = ? where roll = ?");
+        	
+        	ps.setString(1, student.getName());
+        	ps.setString(2, student.getEmail());
+        	ps.setString(3, student.getPassword());
+        	ps.setInt(4, student.getRoll());
+        	
+        	int x = ps.executeUpdate();
+        	
+        	if(x>0) message = "Profile Updated successully!";
+        	else throw new StudentException("Wrong Student Roll number!");
+        	
+        	   
+		} catch (SQLException e) {
+			throw new StudentException(e.getMessage());
+		}
+           
+           return message;
 	}
 
 	@Override

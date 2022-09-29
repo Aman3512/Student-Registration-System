@@ -43,7 +43,7 @@ public interface ServiceDao {
 	
 	public String registerInCourse(int roll, int cid)throws StudentException ,CourseException;
 	
-	public String updateProfile(int roll)throws StudentException;
+	public String updateProfile(Student student)throws StudentException;
 	
 	public List<Course> showAllCourses();
 	
