@@ -5,18 +5,16 @@ public class Course {
 	private int cid;
 	private String name;
 	private int fee;
-	private int seats;
 	
 	public Course() {
 		
 	}
 
-	public Course(int cid, String name, int fee, int seats) {
+	public Course(int cid, String name, int fee) {
 		super();
 		this.cid = cid;
 		this.name = name;
 		this.fee = fee;
-		this.seats = seats;
 	}
 
 	
@@ -44,18 +42,10 @@ public class Course {
 		this.fee = fee;
 	}
 
-	public int getSeats() {
-		return seats;
-	}
-
-	public void setSeats(int seats) {
-		this.seats = seats;
-	}
 
 	@Override
 	public String toString() {
-		return "Course [cid=" + cid + ", name=" + name + ", fee=" + fee + ", seats=" + seats
-				+ "]";
+		return "Course [cid=" + cid + ", name=" + name + ", fee=" + fee +"]";
 	}
 	
 	

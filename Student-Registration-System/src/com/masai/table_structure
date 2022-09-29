@@ -1,5 +1,6 @@
 
 Student table =>
+----------------
 
 +----------+-------------+------+-----+---------+----------------+
 | Field    | Type        | Null | Key | Default | Extra          |
@@ -11,17 +12,18 @@ Student table =>
 +----------+-------------+------+-----+---------+----------------+
 
 Course table =>
+----------------
 
 +-------+-------------+------+-----+---------+----------------+
 | Field | Type        | Null | Key | Default | Extra          |
 +-------+-------------+------+-----+---------+----------------+
 | cid   | int         | NO   | PRI | NULL    | auto_increment |
-| cname | varchar(12) | YES  |     | NULL    |                |
+| cname | varchar(20) | YES  | UNI | NULL    |                |
 | fee   | int         | YES  |     | NULL    |                |
-| seat  | int         | YES  |     | NULL    |                |
 +-------+-------------+------+-----+---------+----------------+
 
 course_student table =>
+------------------------
 
 +-------+------+------+-----+---------+-------+
 | Field | Type | Null | Key | Default | Extra |
@@ -29,3 +31,14 @@ course_student table =>
 | cid   | int  | YES  | MUL | NULL    |       |
 | roll  | int  | YES  | MUL | NULL    |       |
 +-------+------+------+-----+---------+-------+
+
+
+Admin table (hard coded) =>
+-----------------------------
+
++----+--------+------------------+----------+
+| id | name   | email            | password |
++----+--------+------------------+----------+
+|  1 | admin1 | admin1@gmail.com | 1111     |
+|  2 | admin2 | admin2@gmail.com | 2222     |
++----+--------+------------------+----------+
