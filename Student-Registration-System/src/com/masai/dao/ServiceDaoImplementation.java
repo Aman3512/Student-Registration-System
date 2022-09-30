@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.masai.bean.Admin;
@@ -51,26 +52,110 @@ public class ServiceDaoImplementation implements ServiceDao{
 
 	@Override
 	public String addCourse(Course course) {
-		// TODO Auto-generated method stub
-		return null;
+
+		String message = "not inserted...";
+		
+		try(Connection conn = DBConnection.ProvideConnection()) {
+			
+			PreparedStatement ps = conn.prepareStatement("insert into course(cname,fee) values(?,?)");
+			
+			ps.setString(1, course.getName());
+			ps.setInt(2, course.getFee());
+			
+			int x = ps.executeUpdate();
+			
+			if(x>0) message = "Course Added Successfully!";
+			
+			
+		} catch (SQLException e) {
+		     message = e.getMessage();
+		}
+		
+		
+		return message;
+
 	}
 
 	@Override
-	public String updateFee(String cname) throws CourseException {
-		// TODO Auto-generated method stub
-		return null;
+	public String updateFee(String cname, int fee) throws CourseException {
+
+          String message = "not updated...";
+          
+          try(Connection conn = DBConnection.ProvideConnection()) {
+			
+        	 PreparedStatement ps = conn.prepareStatement("update course set fee = ? where cname = ? ");
+        	 
+        	 ps.setInt(1, fee);
+        	 ps.setString(2, cname);
+        	 
+        	 int x = ps.executeUpdate();
+        	 
+        	 if(x>0) message = "Fee update Successfully!";
+        	 else throw new CourseException("Invalid Course name...");
+        	 
+		} catch (SQLException e) {
+			message = e.getMessage();
+		}
+          
+          return message;
 	}
 
 	@Override
 	public String deleteCourse(String cname) throws CourseException {
-		// TODO Auto-generated method stub
-		return null;
+ 
+		String message = "not deleted...";
+		
+		try(Connection conn = DBConnection.ProvideConnection()) {
+			
+		  PreparedStatement ps = conn.prepareStatement("delete from course where cname = ?");
+			
+		  ps.setString(1, cname);
+		  
+		  int x = ps.executeUpdate();
+		  
+		  if(x>0) message = "Course deleted Successfully!";
+		  else throw new CourseException("Invalid course name");
+		  
+		} catch (SQLException e) {
+			message = e.getMessage();
+		}
+		
+		return message;
+
 	}
 
 	@Override
 	public Course getCourseDetail(String cname) throws CourseException {
-		// TODO Auto-generated method stub
-		return null;
+
+		Course course = null;
+		
+		try(Connection conn = DBConnection.ProvideConnection()) {
+			
+			PreparedStatement ps = conn.prepareStatement("select * from course where cname = ?");
+			
+			ps.setString(1, cname);
+			
+			ResultSet rs = ps.executeQuery();
+			
+			if(rs.next()) {
+				
+				course = new Course();
+				
+				course.setCid(rs.getInt("cid"));
+				course.setName(rs.getString("cname"));
+				course.setFee(rs.getInt("fee"));
+				
+				
+			}else {
+				throw new CourseException("Course doesn't exist wtih name " + cname);
+			}
+			
+		} catch (SQLException e) {
+			throw new CourseException(e.getMessage());
+		}
+		
+		return course;
+
 	}
 
 	@Override
@@ -80,7 +165,7 @@ public class ServiceDaoImplementation implements ServiceDao{
 	}
 
 	@Override
-	public List<StudentDTO> getAllStudentByCourse(String cname) throws CourseException {
+	public List<StudentDTO> getAllStudentByBatch(String cname) throws BatchException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -144,7 +229,7 @@ public class ServiceDaoImplementation implements ServiceDao{
 	}
 
 	
-
+ 
 	@Override
 	public String updateProfile(Student student) throws StudentException {
 
@@ -174,8 +259,35 @@ public class ServiceDaoImplementation implements ServiceDao{
 
 	@Override
 	public List<Course> showAllCourses() {
-		// TODO Auto-generated method stub
-		return null;
+
+		    List<Course> list = new ArrayList<>();
+		
+            try(Connection conn = DBConnection.ProvideConnection()) {
+			
+			PreparedStatement ps = conn.prepareStatement("select * from course");
+			
+			ResultSet rs = ps.executeQuery();
+			
+			while(rs.next()) {
+				
+				Course course = new Course();
+				
+				course.setCid(rs.getInt("cid"));
+				course.setName(rs.getString("cname"));
+				course.setFee(rs.getInt("fee"));
+				
+				list.add(course);
+				
+				
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		
+		return list;
+
 	}
 
 	@Override
@@ -192,9 +304,66 @@ public class ServiceDaoImplementation implements ServiceDao{
 	}
 
 	@Override
-	public String registerInCourse(int roll, int cid) throws StudentException, CourseException {
-		// TODO Auto-generated method stub
-		return null;
+	public String registerInCourse(int roll, String cname) throws StudentException, CourseException {
+
+		String message ="Not Resgistered";
+		
+		
+		try(Connection conn= DBConnection.ProvideConnection()) {
+			
+		 	PreparedStatement ps= conn.prepareStatement("select * from student where roll =?");
+			
+		 	
+		 	ps.setInt(1, roll);
+		 	
+		 	ResultSet rs= ps.executeQuery();
+			
+		 	if(rs.next()) {
+		 		
+		 		PreparedStatement ps2= conn.prepareStatement("select * from course where cname=?");
+		 		
+		 		ps2.setString(1,cname);
+
+		 		ResultSet rs2= ps2.executeQuery();
+		 		
+		 		if(rs2.next()) {
+		 			
+                   int cid = rs2.getInt("cid");
+		 			
+		 			PreparedStatement ps3= conn.prepareStatement("insert into course_student values(?,?)");
+		 			
+		 			
+		 			ps3.setInt(1, cid);
+		 			ps3.setInt(2, roll);
+		 			
+		 			int x= ps3.executeUpdate();
+		 			
+		 			if(x > 0)
+		 				message = "Student registered inside the Course Sucessfully.. ";
+		 			else
+		 				throw new StudentException("Technical error..");
+		 			
+		 			
+		 			
+		 		}
+		 		else
+		 			throw new CourseException("Invalid Course...");
+		 		
+		 			
+		 		
+		 	}else
+		 		throw new StudentException("Invalid Student...");
+			
+			
+			
+			
+		} catch (SQLException e) {
+			throw new StudentException(e.getMessage());
+		}
+		
+		
+		
+		return message;
 	}
 
 	

@@ -1,12 +1,15 @@
 package com.masai.usecases;
 
+import java.util.List;
 import java.util.Scanner;
 
 import com.masai.bean.Admin;
+import com.masai.bean.Course;
 import com.masai.bean.Student;
 import com.masai.dao.ServiceDao;
 import com.masai.dao.ServiceDaoImplementation;
 import com.masai.exceptions.AdminException;
+import com.masai.exceptions.CourseException;
 import com.masai.exceptions.StudentException;
 import com.masai.main.SelectOptions;
 
@@ -126,5 +129,151 @@ public class Usecases {
  		
 		SelectOptions.studentOptions(roll);
          
+	}
+	
+	
+	public static void addCourse() {
+		
+		Scanner sc = new Scanner(System.in);
+		
+		System.out.println("Enter Course Name : ");
+		String name = sc.nextLine();
+		
+		System.out.println("Enter Course Fee :");
+		int fee = sc.nextInt();
+		
+		Course course = new Course();
+		course.setName(name);
+		course.setFee(fee);
+		
+		ServiceDao dao = new ServiceDaoImplementation();
+		
+		String result = dao.addCourse(course);
+		System.out.println(result);
+		
+		SelectOptions.adminOptions();
+		
+	}
+	
+	
+	public static void updateCourseFee() {
+		
+		Scanner sc = new Scanner(System.in);
+		
+		System.out.println("Enter Course name :");
+		String name = sc.nextLine();
+		
+		System.out.println("Enter New fee :");
+		int fee = sc.nextInt();
+		
+		ServiceDao dao = new ServiceDaoImplementation();
+		
+		try {
+			String result = dao.updateFee(name, fee);
+			System.out.println(result);
+			
+		} catch (CourseException e) {
+			e.printStackTrace();
+		}
+		
+		SelectOptions.adminOptions();
+	}
+	
+	
+	public static void deleteCourse() {
+		
+		Scanner sc = new Scanner(System.in);
+		
+		System.out.println("Enter Course Name :");
+		String name = sc.nextLine();
+		
+		ServiceDao dao = new ServiceDaoImplementation();
+		
+		try {
+			String result = dao.deleteCourse(name);
+			System.out.println(result);
+			
+		} catch (CourseException e) {
+			e.printStackTrace();
+		}
+		
+		
+		SelectOptions.adminOptions();
+	}
+	
+	
+	public static void courseDetails() {
+		
+		Scanner sc = new Scanner(System.in);
+		
+		System.out.println("Enter course name :");
+        String name = sc.nextLine();	
+        
+        ServiceDao dao = new ServiceDaoImplementation();
+        
+        try {
+			Course course = dao.getCourseDetail(name);
+			
+			System.out.println("------------------------------------");
+			System.out.println("Course Id : " + course.getCid());
+			System.out.println("Course Name : " + course.getName());
+			System.out.println("Courses Fee : " + course.getFee());
+			System.out.println("-------------------------------------");
+			
+		} catch (CourseException e) {
+			e.printStackTrace();
+		}
+        
+        SelectOptions.adminOptions();
+	}
+	
+	
+	public static void showAllCourse(int roll) {
+		
+        ServiceDao dao = new ServiceDaoImplementation();
+        
+        try {
+			List<Course> list = dao.showAllCourses();
+			
+		    list.forEach(course ->{
+		    	
+		    	System.out.println("------------------------------------");
+				System.out.println("Course Id : " + course.getCid());
+				System.out.println("Course Name : " + course.getName());
+				System.out.println("Courses Fee : " + course.getFee());
+				System.out.println("-------------------------------------");
+		    	
+		    });
+		 	
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+        
+        SelectOptions.studentOptions(roll);
+		
+	}
+	
+	public static void registerInCourse(int roll) {
+		
+		Scanner sc = new Scanner(System.in);
+		
+		System.out.println("Enter Course Name :");
+		String cname = sc.nextLine();
+		
+		 ServiceDao dao = new ServiceDaoImplementation();
+		 
+		 try {
+			String result = dao.registerInCourse(roll, cname);
+			System.out.println(result);
+			
+		} catch (StudentException | CourseException e) {
+			
+			e.printStackTrace();
+		}
+		 
+		 SelectOptions.studentOptions(roll);
+		
 	}
 }
