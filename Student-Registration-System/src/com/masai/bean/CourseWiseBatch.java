@@ -2,35 +2,45 @@ package com.masai.bean;
 
 public class CourseWiseBatch {
 
-	private int id; 
-	private String cname;
+	private int batchId;
+	private String batchName;
+	private String courseName;
 	private int totalSeat;
 	
 	public CourseWiseBatch() {
 		
 	}
 
-	public CourseWiseBatch(int id, String cname, int totalSeat) {
+	public CourseWiseBatch(int batchId, String batchName, String courseName, int totalSeat) {
 		super();
-		this.id = id;
-		this.cname = cname;
+		this.batchId = batchId;
+		this.batchName = batchName;
+		this.courseName = courseName;
 		this.totalSeat = totalSeat;
 	}
 
-	public int getId() {
-		return id;
+	public int getBatchId() {
+		return batchId;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public void setBatchId(int batchId) {
+		this.batchId = batchId;
 	}
 
-	public String getCname() {
-		return cname;
+	public String getBatchName() {
+		return batchName;
 	}
 
-	public void setCname(String cname) {
-		this.cname = cname;
+	public void setBatchName(String batchName) {
+		this.batchName = batchName;
+	}
+
+	public String getCourseName() {
+		return courseName;
+	}
+
+	public void setCourseName(String courseName) {
+		this.courseName = courseName;
 	}
 
 	public int getTotalSeat() {

@@ -3,7 +3,9 @@ package com.masai.dao;
 import java.util.List;
 
 import com.masai.bean.Admin;
+import com.masai.bean.BatchDTO;
 import com.masai.bean.Course;
+import com.masai.bean.CourseWiseBatch;
 import com.masai.bean.Student;
 import com.masai.bean.StudentDTO;
 import com.masai.exceptions.AdminException;
@@ -25,14 +27,13 @@ public interface ServiceDao {
 	
 	public Course getCourseDetail(String cname)throws CourseException;
 	
-	public String createBatchUnderCourse(String cname)throws CourseException;
+	public String createBatchUnderCourse(CourseWiseBatch obj);
 	
-	public String allocateStudentInBatchUnderCourse(int roll, int batchId, String cname )throws StudentException, BatchException, CourseException;
+	public String allocateStudentInBatchUnderCourse(int roll, String bname )throws StudentException, BatchException;
 	
-	// In Batch under course table
-	public String updateSeat(String cname)throws CourseException;
+	public String updateSeat(String bname,int seat)throws BatchException;
 	
-	public List<StudentDTO> getAllStudentByBatch(String cname)throws BatchException;
+	public List<BatchDTO> getAllStudentByBatch();
 	
 	
 	// Student

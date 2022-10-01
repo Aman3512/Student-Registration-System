@@ -4,11 +4,14 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.masai.bean.Admin;
+import com.masai.bean.BatchDTO;
 import com.masai.bean.Course;
+import com.masai.bean.CourseWiseBatch;
 import com.masai.bean.Student;
 import com.masai.dao.ServiceDao;
 import com.masai.dao.ServiceDaoImplementation;
 import com.masai.exceptions.AdminException;
+import com.masai.exceptions.BatchException;
 import com.masai.exceptions.CourseException;
 import com.masai.exceptions.StudentException;
 import com.masai.main.SelectOptions;
@@ -63,7 +66,8 @@ public class Usecases {
 		     SelectOptions.adminOptions();
 		
 	     } catch (AdminException e) {
-		     e.printStackTrace();
+		    System.out.println(e.getMessage());
+		     SelectOptions.welcomeOptions();
 	     }
 		
 	}
@@ -90,7 +94,9 @@ public class Usecases {
 		     SelectOptions.studentOptions(student.getRoll());
 		
 	     } catch (StudentException e) {
-		     e.printStackTrace();
+		     System.out.println(e.getMessage());
+		     SelectOptions.welcomeOptions();
+		     
 	     }
 		
 	}
@@ -122,8 +128,7 @@ public class Usecases {
 			 System.out.println(result);
 			 
 		} catch (StudentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
  	    
  		
@@ -173,7 +178,7 @@ public class Usecases {
 			System.out.println(result);
 			
 		} catch (CourseException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 		
 		SelectOptions.adminOptions();
@@ -194,7 +199,7 @@ public class Usecases {
 			System.out.println(result);
 			
 		} catch (CourseException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 		
 		
@@ -221,7 +226,7 @@ public class Usecases {
 			System.out.println("-------------------------------------");
 			
 		} catch (CourseException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
         
         SelectOptions.adminOptions();
@@ -248,7 +253,7 @@ public class Usecases {
 			
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
         
         SelectOptions.studentOptions(roll);
@@ -270,10 +275,109 @@ public class Usecases {
 			
 		} catch (StudentException | CourseException e) {
 			
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 		 
 		 SelectOptions.studentOptions(roll);
 		
+	}
+	
+	
+	public static void batchUnderCourse() {
+		
+		Scanner sc = new Scanner(System.in);
+		
+		System.out.println("Enter Course Name : ");
+		String cname = sc.nextLine();
+		
+		System.out.println("Enter Batch Name :");
+		String bname = sc.nextLine();
+		
+		System.out.println("Enter Total Seats of the Batch : ");
+		int seat = sc.nextInt();
+		
+		CourseWiseBatch obj = new CourseWiseBatch();
+		obj.setCourseName(cname);
+		obj.setBatchName(bname);
+		obj.setTotalSeat(seat);
+		
+		 ServiceDao dao = new ServiceDaoImplementation();
+		 
+		 String result = dao.createBatchUnderCourse(obj);
+		 
+		 System.out.println(result);
+		 
+		 SelectOptions.adminOptions();
+		 
+	}
+	
+	
+	public static void allocatedStudentInBatch() {
+		
+		Scanner sc = new Scanner(System.in);
+		
+		System.out.println("Enter Batch Name :");
+		String bname = sc.nextLine();
+		
+		System.out.println("Enter Student Roll number :");
+		int roll = sc.nextInt();
+		
+		 ServiceDao dao = new ServiceDaoImplementation();
+		 
+		 try {
+			String result = dao.allocateStudentInBatchUnderCourse(roll, bname);
+			System.out.println(result);
+			
+		} catch (StudentException | BatchException e) {
+			System.out.println(e.getMessage());
+		}
+		
+		
+		 SelectOptions.adminOptions();
+	}
+	
+	
+	public static void updateSeat() {
+		
+		Scanner sc = new Scanner(System.in);
+		
+		System.out.println("Enter Batch name :");
+		String bname = sc.nextLine();
+		
+		System.out.println("Enter New Total Seat of the Batch :");
+		int seat = sc.nextInt();
+		
+		 ServiceDao dao = new ServiceDaoImplementation();
+		 
+		 try {
+			String result = dao.updateSeat(bname, seat);
+			System.out.println(result);
+			
+		} catch (BatchException e) {
+			System.out.println(e.getMessage());
+		}
+		 
+		 SelectOptions.adminOptions();
+		
+	}
+	
+	
+	public static void viewStudentofBatch() {
+		
+		ServiceDao dao = new ServiceDaoImplementation();
+		
+		List<BatchDTO> obj = dao.getAllStudentByBatch();
+		
+		obj.forEach(s -> {
+			
+			System.out.println("----------------------------------------");
+			System.out.println("Batch : " + s.getBatchName());
+			System.out.println("Student Roll no. : " + s.getRoll());
+			System.out.println("Student Name : " + s.getName());
+			System.out.println("Student Email : " + s.getEmail());
+			System.out.println("-----------------------------------------");
+		});
+		
+		SelectOptions.adminOptions();
 	}
 }

@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.masai.bean.Admin;
+import com.masai.bean.BatchDTO;
 import com.masai.bean.Course;
+import com.masai.bean.CourseWiseBatch;
 import com.masai.bean.Student;
 import com.masai.bean.StudentDTO;
 import com.masai.connection.DBConnection;
@@ -19,6 +21,7 @@ import com.masai.exceptions.StudentException;
 
 public class ServiceDaoImplementation implements ServiceDao{
 
+	
 	@Override
 	public Admin loginAdmin(String email, String password)throws AdminException{
 		 
@@ -49,6 +52,7 @@ public class ServiceDaoImplementation implements ServiceDao{
 		
 		return admin;
 	}
+	
 
 	@Override
 	public String addCourse(Course course) {
@@ -66,7 +70,7 @@ public class ServiceDaoImplementation implements ServiceDao{
 			
 			if(x>0) message = "Course Added Successfully!";
 			
-			
+	
 		} catch (SQLException e) {
 		     message = e.getMessage();
 		}
@@ -76,6 +80,7 @@ public class ServiceDaoImplementation implements ServiceDao{
 
 	}
 
+	
 	@Override
 	public String updateFee(String cname, int fee) throws CourseException {
 
@@ -100,6 +105,7 @@ public class ServiceDaoImplementation implements ServiceDao{
           return message;
 	}
 
+	
 	@Override
 	public String deleteCourse(String cname) throws CourseException {
  
@@ -124,6 +130,7 @@ public class ServiceDaoImplementation implements ServiceDao{
 
 	}
 
+	
 	@Override
 	public Course getCourseDetail(String cname) throws CourseException {
 
@@ -158,18 +165,64 @@ public class ServiceDaoImplementation implements ServiceDao{
 
 	}
 
+	
 	@Override
-	public String updateSeat(String cname) throws CourseException {
-		// TODO Auto-generated method stub
-		return null;
+	public String updateSeat(String bname,int seat) throws BatchException {
+
+        String msg = "not updated..";
+        
+        try(Connection conn = DBConnection.ProvideConnection()) {
+			
+         PreparedStatement ps = conn.prepareStatement("update course_batch set TotalSeat = ? where batchName = ?");
+        	
+         ps.setInt(1, seat);
+         ps.setString(2, bname);
+         
+         int x = ps.executeUpdate();
+         
+         if(x>0) msg = "seat updated successfully!";
+         else throw new BatchException("Batch name not found..");
+         
+		} catch (SQLException e) {
+			msg = e.getMessage();
+		}
+        
+        return msg;
 	}
 
+	
 	@Override
-	public List<StudentDTO> getAllStudentByBatch(String cname) throws BatchException {
-		// TODO Auto-generated method stub
-		return null;
+	public List<BatchDTO> getAllStudentByBatch() {
+
+           List<BatchDTO> list = new ArrayList<>();
+           
+           try(Connection conn = DBConnection.ProvideConnection()) {
+			
+        	 PreparedStatement ps = conn.prepareStatement("select s.* , b.batchName from student s INNER JOIN batch b ON s.roll = b.roll");
+        	 
+        	 ResultSet rs = ps.executeQuery();
+        	 
+        	 while(rs.next()) {
+        		 
+        		 BatchDTO dto = new BatchDTO();
+        		 
+        		 dto.setRoll(rs.getInt("roll"));
+        		 dto.setName(rs.getString("name"));
+        		 dto.setEmail(rs.getString("email"));
+        		 dto.setBatchName(rs.getString("batchName"));
+
+        		 list.add(dto);
+
+        	 }
+        	 
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+           
+           return list;
 	}
 
+	
 	@Override
 	public String registerStudent(Student student) {
 		
@@ -195,6 +248,7 @@ public class ServiceDaoImplementation implements ServiceDao{
 		return message;
 	}
 
+	
 	@Override
 	public Student loginStudent(String email, String password) throws StudentException {
 
@@ -256,6 +310,7 @@ public class ServiceDaoImplementation implements ServiceDao{
            
            return message;
 	}
+	
 
 	@Override
 	public List<Course> showAllCourses() {
@@ -289,19 +344,84 @@ public class ServiceDaoImplementation implements ServiceDao{
 		return list;
 
 	}
+	
 
 	@Override
-	public String createBatchUnderCourse(String cname) throws CourseException {
-		// TODO Auto-generated method stub
-		return null;
+	public String createBatchUnderCourse(CourseWiseBatch obj) {
+
+		String msg = "batch not created...";
+		
+		try(Connection conn = DBConnection.ProvideConnection()) {
+			
+			PreparedStatement ps = conn.prepareStatement("insert into course_batch(batchName,TotalSeat,courseName) values(?,?,?)");
+			
+			ps.setString(1, obj.getBatchName());
+			ps.setInt(2, obj.getTotalSeat());
+			ps.setString(3, obj.getCourseName());
+			
+			int x = ps.executeUpdate();
+			
+			if(x>0) msg = "Batch created successfully!";
+			
+			
+		} catch (SQLException e) {
+			msg = e.getMessage();
+		}
+		
+		return msg;
+
 	}
 
+	
 	@Override
-	public String allocateStudentInBatchUnderCourse(int roll, int batchId, String cname)
-			throws StudentException, BatchException, CourseException {
-		// TODO Auto-generated method stub
-		return null;
+	public String allocateStudentInBatchUnderCourse(int roll, String bname)throws StudentException, BatchException {
+
+		String msg = "not allocated..";
+				
+		try(Connection conn = DBConnection.ProvideConnection()) {
+			
+			PreparedStatement ps = conn.prepareStatement("select * from student where roll = ?");
+			
+			ps.setInt(1, roll);
+			
+			ResultSet rs = ps.executeQuery();
+			
+			if(rs.next()) {
+				
+				PreparedStatement ps1 = conn.prepareStatement("select * from course_Batch where batchName = ?");
+				
+				ps1.setString(1, bname);
+				
+				ResultSet rs1 = ps1.executeQuery();
+				
+				if(rs1.next()) {
+					
+				PreparedStatement ps2 = conn.prepareStatement("insert into batch values(?,?)");
+				
+				ps2.setInt(1, roll);
+				ps2.setString(2, bname);
+				
+                int x = ps2.executeUpdate();
+                
+                if(x>0) msg = "Student allocated in the batch successfully!";
+                else throw new StudentException("technical error..");
+					
+				}else {
+					throw new BatchException("Invalid batch name..");
+				}
+				
+			}else {
+				throw new StudentException("Invalid Student Roll number..");
+			}
+			
+		} catch (SQLException e) {
+			msg = e.getMessage();
+		}
+				
+	    return msg;
+          
 	}
+	
 
 	@Override
 	public String registerInCourse(int roll, String cname) throws StudentException, CourseException {

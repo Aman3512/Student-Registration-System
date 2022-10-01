@@ -2,45 +2,35 @@ package com.masai.bean;
 
 public class Batch {
 
-	private int batchId;
-	private String courseName;
-	private int stRoll;
+	private int studentRoll;
+	private String batchName;
 	
 	public Batch() {
 		
 	}
 
-	public Batch(int batchId, String courseName, int stRoll) {
+	public Batch(int studentRoll, String batchName) {
 		super();
-		this.batchId = batchId;
-		this.courseName = courseName;
-		this.stRoll = stRoll;
+		this.studentRoll = studentRoll;
+		this.batchName = batchName;
 	}
 
-	public int getBatchId() {
-		return batchId;
+	public int getStudentRoll() {
+		return studentRoll;
 	}
 
-	public void setBatchId(int batchId) {
-		this.batchId = batchId;
+	public void setStudentRoll(int studentRoll) {
+		this.studentRoll = studentRoll;
 	}
 
-	public String getCourseName() {
-		return courseName;
+	public String getBatchName() {
+		return batchName;
 	}
 
-	public void setCourseName(String courseName) {
-		this.courseName = courseName;
+	public void setBatchName(String batchName) {
+		this.batchName = batchName;
 	}
-
-	public int getStRoll() {
-		return stRoll;
-	}
-
-	public void setStRoll(int stRoll) {
-		this.stRoll = stRoll;
-	}
-
+	
 	
 	
 }
