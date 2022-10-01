@@ -1,6 +1,6 @@
 # Automated-Student-Registration-System
 
->#### It is  a simple Java application to automate the process of registration of a student in a particular course(Android, Java ,JEE, PHP, Oracle etc).
+>#### It is a Java application to automate the process of registration of a student in a particular course(Android, Java ,JEE, PHP, Oracle etc).
 <br>
 
 <b>The main user of the system :-</b>
