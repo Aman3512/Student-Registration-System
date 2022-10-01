@@ -23,4 +23,4 @@
 
 * Register himself in a course with a username and password (email should be the username)
 * can update this details.
-* can see all the available course list and their seat availability.
+* can see all the available course list.
